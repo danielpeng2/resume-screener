@@ -6,39 +6,38 @@ import ResumeScreener from './components/ResumeScreener';
 enum AppState {
   UPLOAD,
   SCREENING,
-  RESULTS,
-  RESCREENING
+  RESULTS
 }
 
 function App() {
   const [appState, setAppState] = useState<AppState>(AppState.UPLOAD);
   const [allResumes, setAllResumes] = useState<File[]>([]);
-  const [shortlistedResumes, setShortlistedResumes] = useState<File[]>([]);
-  const [finalShortlist, setFinalShortlist] = useState<File[]>([]);
+  const [currentShortlist, setCurrentShortlist] = useState<File[]>([]);
+  const [screeningRound, setScreeningRound] = useState(1);
+  const [totalOriginalCount, setTotalOriginalCount] = useState(0);
 
   const handleFilesUploaded = (files: File[]) => {
     setAllResumes(files);
+    setTotalOriginalCount(files.length);
     setAppState(AppState.SCREENING);
   };
 
   const handleScreeningComplete = (shortlisted: File[]) => {
-    setShortlistedResumes(shortlisted);
+    setCurrentShortlist(shortlisted);
     setAppState(AppState.RESULTS);
   };
 
-  const handleRescreeningComplete = (finalList: File[]) => {
-    setFinalShortlist(finalList);
-    setAppState(AppState.RESULTS);
-  };
-
-  const startRescreening = () => {
-    setAppState(AppState.RESCREENING);
+  const startNextScreeningRound = () => {
+    setAllResumes(currentShortlist);
+    setScreeningRound(prev => prev + 1);
+    setAppState(AppState.SCREENING);
   };
 
   const resetApp = () => {
     setAllResumes([]);
-    setShortlistedResumes([]);
-    setFinalShortlist([]);
+    setCurrentShortlist([]);
+    setScreeningRound(1);
+    setTotalOriginalCount(0);
     setAppState(AppState.UPLOAD);
   };
 
@@ -60,42 +59,28 @@ function App() {
           />
         )}
 
-        {appState === AppState.RESCREENING && (
-          <ResumeScreener 
-            resumes={shortlistedResumes} 
-            onComplete={handleRescreeningComplete} 
-          />
-        )}
-
         {appState === AppState.RESULTS && (
           <div className="results-screen">
             <h2>Screening Results</h2>
-            {finalShortlist.length > 0 ? (
+            <p>
+              {screeningRound > 1 
+                ? `Round ${screeningRound} shortlist: ${currentShortlist.length} of ${allResumes.length} resumes` 
+                : `First round shortlist: ${currentShortlist.length} of ${totalOriginalCount} resumes`}
+            </p>
+            
+            {currentShortlist.length > 0 && (
               <>
-                <p>Final shortlist: {finalShortlist.length} resumes</p>
                 <ul className="file-list">
-                  {finalShortlist.map((file, index) => (
+                  {currentShortlist.map((file, index) => (
                     <li key={index}>{file.name}</li>
                   ))}
                 </ul>
-              </>
-            ) : (
-              <>
-                <p>First round shortlist: {shortlistedResumes.length} of {allResumes.length} resumes</p>
-                {shortlistedResumes.length > 0 && (
-                  <>
-                    <ul className="file-list">
-                      {shortlistedResumes.map((file, index) => (
-                        <li key={index}>{file.name}</li>
-                      ))}
-                    </ul>
-                    <button className="rescreen-button" onClick={startRescreening}>
-                      Screen Shortlisted Resumes Again
-                    </button>
-                  </>
-                )}
+                <button className="rescreen-button" onClick={startNextScreeningRound}>
+                  Screen Shortlisted Resumes Again
+                </button>
               </>
             )}
+            
             <button className="reset-button" onClick={resetApp}>
               Start Over with New Resumes
             </button>
