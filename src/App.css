@@ -326,3 +326,72 @@ main {
   background-color: #7f8c8d;
   color: white;
 }
+
+/* Loading State */
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  font-size: 1.2rem;
+  color: #666;
+}
+
+/* Restore Prompt Styles */
+.restore-prompt {
+  background-color: var(--light-bg);
+  padding: 3rem;
+  border-radius: 8px;
+  text-align: center;
+  max-width: 500px;
+  margin: 2rem auto;
+}
+
+.restore-prompt h2 {
+  margin-bottom: 1rem;
+  color: var(--text-color);
+}
+
+.restore-prompt p {
+  color: #666;
+  margin-bottom: 2rem;
+}
+
+.restore-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.restore-button {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s;
+}
+
+.restore-button:hover {
+  background-color: #2980b9;
+}
+
+.start-fresh-button {
+  background-color: #7f8c8d;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s;
+}
+
+.start-fresh-button:hover {
+  background-color: #6c7a7b;
+}

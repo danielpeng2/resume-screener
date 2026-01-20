@@ -21,6 +21,7 @@ declare module 'react-pdf' {
     loading?: ReactElement;
     error?: ReactElement;
     noData?: ReactElement;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     customTextRenderer?: (text: string, item: any) => string;
   }
   
