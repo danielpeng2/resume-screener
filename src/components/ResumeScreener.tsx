@@ -3,12 +3,23 @@ import PDFViewer from './PDFViewer';
 
 interface ResumeScreenerProps {
   resumes: File[];
+  initialIndex?: number;
+  initialShortlist?: File[];
   onComplete: (shortlisted: File[]) => void;
+  onIndexChange?: (index: number) => void;
+  onShortlistChange?: (shortlisted: File[]) => void;
 }
 
-const ResumeScreener = ({ resumes, onComplete }: ResumeScreenerProps) => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [shortlisted, setShortlisted] = useState<File[]>([]);
+const ResumeScreener = ({
+  resumes,
+  initialIndex = 0,
+  initialShortlist = [],
+  onComplete,
+  onIndexChange,
+  onShortlistChange,
+}: ResumeScreenerProps) => {
+  const [currentIndex, setCurrentIndex] = useState(initialIndex);
+  const [shortlisted, setShortlisted] = useState<File[]>(initialShortlist);
   const pdfViewerRef = useRef<{ previousPage: () => void; nextPage: () => void } | null>(null);
   
   const currentResume = resumes[currentIndex];
@@ -17,21 +28,26 @@ const ResumeScreener = ({ resumes, onComplete }: ResumeScreenerProps) => {
   const handleShortlist = useCallback(() => {
     const newShortlisted = [...shortlisted, currentResume];
     setShortlisted(newShortlisted);
-    
+    onShortlistChange?.(newShortlisted);
+
     if (isLastResume) {
       onComplete(newShortlisted);
     } else {
-      setCurrentIndex(prev => prev + 1);
+      const newIndex = currentIndex + 1;
+      setCurrentIndex(newIndex);
+      onIndexChange?.(newIndex);
     }
-  }, [currentResume, isLastResume, onComplete, shortlisted]);
-  
+  }, [currentResume, currentIndex, isLastResume, onComplete, onIndexChange, onShortlistChange, shortlisted]);
+
   const handleDiscard = useCallback(() => {
     if (isLastResume) {
       onComplete(shortlisted);
     } else {
-      setCurrentIndex(prev => prev + 1);
+      const newIndex = currentIndex + 1;
+      setCurrentIndex(newIndex);
+      onIndexChange?.(newIndex);
     }
-  }, [isLastResume, onComplete, shortlisted]);
+  }, [currentIndex, isLastResume, onComplete, onIndexChange, shortlisted]);
   
   // Add keyboard event handlers
   useEffect(() => {
@@ -65,7 +81,7 @@ const ResumeScreener = ({ resumes, onComplete }: ResumeScreenerProps) => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [currentIndex, isLastResume, shortlisted, handleShortlist, handleDiscard]);
+  }, [handleShortlist, handleDiscard]);
   
   return (
     <div className="resume-screener">

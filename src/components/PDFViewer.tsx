@@ -1,5 +1,11 @@
 import { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
+
+// Cast to any to work around react-pdf type incompatibility with strict JSX
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const PDFDocument = Document as any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const PDFPage = Page as any;
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 import 'react-pdf/dist/esm/Page/TextLayer.css';
 
@@ -61,19 +67,19 @@ const PDFViewer = forwardRef<PDFViewerHandle, PDFViewerProps>(({ file }, ref) =>
   return (
     <div className="pdf-viewer">
       <div className="document-container">
-        <Document
+        <PDFDocument
           file={fileUrl}
           onLoadSuccess={onDocumentLoadSuccess}
           error={<div>Failed to load PDF file.</div>}
           loading={<div>Loading PDF...</div>}
         >
-          <Page 
-            pageNumber={pageNumber} 
+          <PDFPage
+            pageNumber={pageNumber}
             renderTextLayer={true}
             renderAnnotationLayer={true}
             width={850}
           />
-        </Document>
+        </PDFDocument>
       </div>
       
       {numPages && numPages > 1 && (
