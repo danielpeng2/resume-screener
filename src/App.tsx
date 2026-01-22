@@ -112,6 +112,7 @@ function App() {
 
   const startNextScreeningRound = () => {
     setAllResumes(currentShortlist);
+    setCurrentShortlist([]);
     setScreeningRound((prev) => prev + 1);
     setCurrentIndex(0);
     setAppState(AppState.SCREENING);
